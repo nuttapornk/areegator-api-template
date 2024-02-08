@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain</AssemblyName>
+    <RootNamespace>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain</RootNamespace>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
+    <nowarn>CS8618,NU1605,NU1504</nowarn>    
+  </PropertyGroup>
+
+</Project>

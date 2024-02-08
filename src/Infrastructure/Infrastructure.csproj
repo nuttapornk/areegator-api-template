@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure</AssemblyName>
+    <RootNamespace>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure</RootNamespace>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
+    <nowarn>CS8625,CS0114,CS8603,CS8604,CS8618</nowarn>
+  </PropertyGroup>
+
+    <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    </ItemGroup>
+
+</Project>
