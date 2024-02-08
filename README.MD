@@ -16,5 +16,5 @@ dotnet new install Insplatform.Architecture.MicroserviceApi.Template::_TEMPLATEV
 # Test create from sample
 
 ```ssh
-dotnet new ins-api-sln -p areegator -d subbroker -o .\src\companyapi
+dotnet new ins-api-sln -p areegator -d subbroker -o companyapi
 ```
