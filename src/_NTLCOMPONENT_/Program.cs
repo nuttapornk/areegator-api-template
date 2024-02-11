@@ -1,17 +1,37 @@
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.HealthCheck;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddComponentService(builder.Configuration, builder.Environment.EnvironmentName);
+builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//MiddleWare
+app.UseMiddleware<RequestHeaderMiddleware>();
+
+// // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
+    app.UseReDoc();
 }
 
+//health
+app.UseHealthChecks("/health");
+app.MapHealthChecks("/alive", new HealthCheckOptions
+{
+    //ResponseWriter = HealthCheckAlive.WriteAsync
+});
+
+app.MapControllers();
 app.Run();

@@ -18,3 +18,9 @@ dotnet new install Insplatform.Architecture.MicroserviceApi.Template::_TEMPLATEV
 ```ssh
 dotnet new ins-api-sln -p areegator -d subbroker -o companyapi
 ```
+
+- Example Api
+- Database EF Core
+- ✔ Redis
+- ✔ health
+- Log Elk

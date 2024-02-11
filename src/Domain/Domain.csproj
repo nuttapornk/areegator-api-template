@@ -11,4 +11,9 @@
     <nowarn>CS8618,NU1605,NU1504</nowarn>    
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
 </Project>
