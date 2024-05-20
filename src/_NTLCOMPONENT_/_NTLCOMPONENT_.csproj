@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>            
-    <PackageReference Include="NSwag.AspNetCore" Version="14.0.3" />
-    <PackageReference Include="NSwag.MSBuild" Version="14.0.3">
+    <PackageReference Include="NSwag.AspNetCore" Version="14.0.7" />
+    <PackageReference Include="NSwag.MSBuild" Version="14.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>    

@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.models;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 public class RequestHeaderMiddleware : IMiddleware

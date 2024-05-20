@@ -6,6 +6,6 @@ namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers;
 [ApiController]
 public abstract class ApiControllerBase : ControllerBase
 {
-    private ISender _mediator = null;
+    private ISender? _mediator = null;
     protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 }

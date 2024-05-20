@@ -1,3 +1,4 @@
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.NSwag;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 
@@ -23,6 +24,12 @@ public static class ConfigureService
         //Middleware     
         services.AddTransient<RequestHeaderMiddleware>();
 
+        //Add Filters
+        services.AddMvc(cfg =>
+        {
+            cfg.Filters.Add<AddHttpContextItemsActionFilter>();
+            cfg.Filters.Add<ApiExceptionFilter>();
+        });
 
         return services;
     }

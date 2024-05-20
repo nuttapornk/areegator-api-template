@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Interfaces.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Common;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Repositories;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 
@@ -12,6 +14,7 @@ public static class ConfigureService
     {
 
         //services.ConfigRedis(configuration);
+        services.AddScoped<IAgentRepository, AgentRepository>();
         return services;
     }
 

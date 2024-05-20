@@ -1,6 +1,5 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.HealthCheck;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.models;
+namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 
 public class Error
 {
