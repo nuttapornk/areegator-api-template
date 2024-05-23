@@ -17,7 +17,13 @@ public class GetAgentsHandler : IRequestHandler<GetAgentsQuery, IEnumerable<GetA
 
     public async Task<IEnumerable<GetAgentsResponse>> Handle(GetAgentsQuery request, CancellationToken cancellationToken)
     {
-        var agent =  await _agentRepository.GetAgentsAsync();
+        var agent = await _agentRepository.GetAgentsAsync(cancellationToken, new Domain.Entities.AgentFilter
+        {
+            AgentCode = request.Filter.AgentCode,
+            AgentId = request.Filter.AgentId,
+            Name = request.Filter.Name,
+            UserName = request.Filter.UserName,
+        },request.PageIndex,request.PageSize);
         var result = _mapper.Map<IEnumerable<GetAgentsResponse>>(agent);
         return result;
 

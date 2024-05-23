@@ -1,10 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Interfaces.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Common;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Repositories;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Caching;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 
@@ -14,6 +16,12 @@ public static class ConfigureService
     {
 
         //services.ConfigRedis(configuration);
+
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        });
+
         services.AddScoped<IAgentRepository, AgentRepository>();
         return services;
     }

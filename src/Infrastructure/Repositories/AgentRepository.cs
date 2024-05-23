@@ -1,58 +1,65 @@
-﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
+﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Databases;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Repositories;
 
 public class AgentRepository : IAgentRepository
 {
-    public void Dispose()
+    private readonly IAppDbContext _appDbContext;
+    public AgentRepository(IAppDbContext appDbContext)
     {
+        _appDbContext = appDbContext;
+    }
+
+    public void Dispose()
+    { 
         GC.SuppressFinalize(this);
     }
 
-    public Task<Agent> FindByAgentCodeAsync(string agentCode)
+    public async Task<Agent> FindByAgentCodeAsync(string agentCode)
     {
-        return Task.FromResult(new Agent
-        {
-            AgentCode = agentCode,
-            AgentId = "A000001",
-            FirstName = "FirstName",
-            LastName = "LastName"
-        });
+        throw new NotImplementedException();
+        //return await _appDbContext.Agents.FirstOrDefault(a => a.AgentCode == agentCode);
     }
 
-    public Task<Agent> FindByAgentIdAsync(string agentId)
+    public async Task<Agent> FindByAgentIdAsync(string agentId)
     {
-        return Task.FromResult(new Agent
-        {
-            AgentId = agentId,
-            AgentCode = Guid.NewGuid().ToString(),
-            FirstName = "FirstName",
-            LastName = "LastName"
-        });
+        return await _appDbContext.Agents.FirstOrDefaultAsync(a => a.AgentID == agentId);
     }
 
-    public Task<IEnumerable<Agent>> GetAgentsAsync()
+    public async Task<IEnumerable<Agent>> GetAgentsAsync(CancellationToken cancellationToken,
+        AgentFilter filter, int pageIndex = 1, int pageSize = 10)
     {
-        IEnumerable<Agent> agents = [ 
-            new() {
-                AgentCode = Guid.NewGuid().ToString(),
-                AgentId = "A00000001",
-                FirstName = "FristName1",
-                LastName = "LastName1"
-            }, 
-            new() {
-                AgentCode = Guid.NewGuid().ToString(),
-                AgentId = "A00000002",
-                FirstName = "FristName2",
-                LastName = "LastName2"
+        var q = GetAgentQuery(filter);
+        return await q.Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetTotalAgentsAsync(CancellationToken cancellationToken, AgentFilter filter)
+    {
+        var q = GetAgentQuery(filter);
+        return await q.CountAsync(cancellationToken);
+    }
+
+    private IQueryable<Agent> GetAgentQuery(AgentFilter filter)
+    {
+        var q = _appDbContext.Agents.AsNoTracking().AsQueryable();
+        if (filter != null)
+        {
+            if (!string.IsNullOrEmpty(filter.AgentId))
+            {
+                q = q.Where(a => a.AgentID == filter.AgentId);
             }
-        ];
-        return Task.FromResult(agents);
+
+            if (!string.IsNullOrEmpty(filter.UserName))
+            {
+                q = q.Where(a => a.UserName.Contains(filter.UserName));
+            }
+        }
+        return q;
     }
 
-    public Task<int> GetTotalAgentsAsync()
-    {
-        return Task.FromResult(2);
-    }
 }

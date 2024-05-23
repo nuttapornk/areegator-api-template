@@ -1,4 +1,4 @@
-namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Interfaces.Caching;
+namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Caching;
 
 public interface IRedisCacheService
 {

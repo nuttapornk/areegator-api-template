@@ -2,8 +2,7 @@
 
 public class Agent
 {
-    public string AgentId { get; set; }
-    public string AgentCode { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string AgentID { get; set; }
+    public string UserName { get; set; }
+    public byte[]? UserImage { get; set; }
 }

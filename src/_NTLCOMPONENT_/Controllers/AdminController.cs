@@ -1,5 +1,6 @@
 ﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Admin.Queries.GetAgents.v1;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Admin.Queries.GetTotalAgents.v1;
 using Microsoft.AspNetCore.Mvc;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers
@@ -16,9 +17,10 @@ namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers
 
         [HttpPost]
         [Route("v1/GetTotalAgents")]
-        public async Task<IActionResult> GetTotalAgents()
+        public async Task<IActionResult> GetTotalAgents(GetTotalAgentsQuery request)
         {
-            return Ok();
+            var result = await Mediator.Send(request);
+            return Ok(BaseResponse.Ok(result));
         }
 
         [HttpPost]
