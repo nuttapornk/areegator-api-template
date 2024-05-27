@@ -3,8 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <ImplicitUsings>enable</ImplicitUsings>    
     <RootNamespace>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_</RootNamespace>
     <AssemblyName>_NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_</AssemblyName>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
@@ -12,7 +11,10 @@
     <nowarn>CS8601,CS1998,CS7022</nowarn>
   </PropertyGroup>
 
-  <ItemGroup>            
+  <ItemGroup>
+    <PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.27.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.5" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.0.7" />
     <PackageReference Include="NSwag.MSBuild" Version="14.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

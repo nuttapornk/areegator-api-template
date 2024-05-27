@@ -1,6 +1,8 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.NSwag;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
+using Newtonsoft.Json.Serialization;
+
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_;
 
@@ -25,11 +27,17 @@ public static class ConfigureService
         services.AddTransient<RequestHeaderMiddleware>();
 
         //Add Filters
-        services.AddMvc(cfg =>
+        services.AddControllers(options =>
         {
-            cfg.Filters.Add<AddHttpContextItemsActionFilter>();
-            cfg.Filters.Add<ApiExceptionFilter>();
+            options.Filters.Add<AddHttpContextItemsActionFilter>();
+            options.Filters.Add<ApiExceptionFilterAttribute>();
         });
+
+        services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
 
         return services;
     }

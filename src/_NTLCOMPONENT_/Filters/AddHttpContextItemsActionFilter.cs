@@ -9,11 +9,15 @@ namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var resultContext = await next();
-            if (resultContext.Result is ObjectResult objectResult && objectResult.Value is BaseResponse baseResponse)
+            if (resultContext.Result is ObjectResult result)
             {
+                if (result.Value is not BaseResponse baseResponse)
+                {
+                    return;
+                }
                 context.HttpContext.Items.Add("AgResponseCode", baseResponse.Code);
-            }
 
+            }
         }
 
     }
