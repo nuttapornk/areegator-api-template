@@ -1,7 +1,7 @@
 ﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetCountries.v1;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetForecast.v1;
-using Microsoft.AspNetCore.Http;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetForecastTotal.v1;
 using Microsoft.AspNetCore.Mvc;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers
@@ -17,12 +17,19 @@ namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers
             _logger = logger;
         }
 
-
         [HttpPost]
         [Route("v1/GetCountries")]
         public async Task<IActionResult> GetCountry()
         {
             var result = await Mediator.Send(new GetCountriesQuery());
+            return Ok(BaseResponse.Ok(result));
+        }
+
+        [HttpPost]
+        [Route("v1/ForecastTotal")]
+        public async Task<IActionResult> GetForecastTotal(GetForecastTotalQuery request)
+        {
+            var result = await Mediator.Send(request);
             return Ok(BaseResponse.Ok(result));
         }
 
