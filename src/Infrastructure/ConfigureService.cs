@@ -1,21 +1,27 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Databases;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Services;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Common;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Infrastructure.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Caching;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageBrokers.Kafka;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageBrokers;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Persistence;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Logging;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 
 public static class ConfigureService
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, 
+        IConfiguration configuration,string envName = "Development")
     {
         //Database
         services.AddDbContext<AppDbContext>(options =>
@@ -32,11 +38,8 @@ public static class ConfigureService
         //Repository
         services.AddTransient<IWeatherRepository, WeatherRepository>();
 
-        //var kafkaOption = MessageBrokersCollectionExtensions.GetKafkaOption(configuration);
-        //services.AddMessageBusSender<ApplicationLog>(kafkaOption);
-        //services.AddMessageBusSender<MessageLogger>(kafkaOption);
-
         //services.ConfigRedis(configuration);
+        services.ConfigLoggingKafka(configuration, envName);
         return services;
     }
 
@@ -76,6 +79,36 @@ public static class ConfigureService
                 Ssl = config.Ssl
             };
         });
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigLoggingKafka(this IServiceCollection services,
+        IConfiguration configuration, string environmentName)
+    {
+
+        services.AddTransient<IConfluentKafkaLogging, ConfluentKafkaLogging>();
+
+        KafkaOptions option = new();
+        configuration.GetSection("KafkaOptions").Bind(option);
+
+#if DEBUG
+        switch (environmentName.ToLower())
+        {
+            case "development":
+                option.BootstrapServers = "mandalorian-dev.ntl.co.th:9092";
+                break;
+            case "uat":
+                option.BootstrapServers = "mandalorian-uat.ntl.co.th:9092";
+                break;
+            case "preproduction":
+                option.BootstrapServers = "mandalorian-pre.ntl.co.th:9092";
+                break;
+        }
+#endif
+
+        services.AddMessageBusSender<ApplicationLog>(option);
+        services.AddMessageBusSender<MessageLogger>(option);
 
         return services;
     }

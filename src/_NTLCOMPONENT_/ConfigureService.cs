@@ -1,6 +1,7 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.NSwag;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares.Logging;
 using Newtonsoft.Json.Serialization;
 
 
@@ -23,9 +24,6 @@ public static class ConfigureService
             config.OperationProcessors.Add(new AddRequiredHeaderParameter());
         });
 
-        //Middleware     
-        services.AddTransient<RequestHeaderMiddleware>();
-
         //Add Filters
         services.AddControllers(options =>
         {
@@ -38,6 +36,10 @@ public static class ConfigureService
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
+
+        //Middleware     
+        services.AddTransient<LoggingMiddleware>();
+        services.AddTransient<RequestHeaderMiddleware>();
 
         return services;
     }
