@@ -18,9 +18,10 @@ dotnet new install Insplatform.Architecture.MicroserviceApi.Template::_TEMPLATEV
 ```ssh
 dotnet new ins-api-sln -p areegator -d subbroker -o companyapi
 ```
-
-- Example Api
-- Database EF Core
+- ✔ .NET 8
+- ✔ Clean Architect
+- ✔ WeatherForecast Example Api
+- ✔ Database EF Core with LINQ
 - ✔ Redis
-- ✔ health
-- Log Elk
+- ✔ Health
+- ✔ Log ELK with Confluent Kafka
