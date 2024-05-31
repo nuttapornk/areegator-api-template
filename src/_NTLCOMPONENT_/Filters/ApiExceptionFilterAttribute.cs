@@ -48,9 +48,28 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleValidationException(ExceptionContext context)
     {
-        var exception = (ValidationException)context.Exception;
-        context.Result = new BadRequestObjectResult(exception.Message);
+        IDictionary<string, string[]> errors = ((ValidationException)context.Exception).Errors;
+        var response = new BaseResponse<IDictionary<string, string[]>>(errors)
+        {
+            Code = StatusCodes.Status400BadRequest.ToString(),
+            DataSource = "Validation",
+            Message = context.Exception.Message,
+            Error = new Error
+            {
+                 Code = "VALIDATE001",
+                 Message = context.Exception.Message,
+            }
+        };
+        context.Result = new JsonResult(response)
+        {
+            StatusCode = StatusCodes.Status200OK
+        };
+
         context.ExceptionHandled = true;
+
+        //var exception = (ValidationException)context.Exception;
+        //context.Result = new BadRequestObjectResult(exception.Message);
+        //context.ExceptionHandled = true;
     }
 
     private void HandleInvalidModelStateException(ExceptionContext context)

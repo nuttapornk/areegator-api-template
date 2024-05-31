@@ -3,7 +3,7 @@ using System.Text;
 using Elastic.Apm;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Infrastructure.Logging;
 
-namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares.Logging;
+namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 
 public class LoggingMiddleware : IMiddleware
 {
@@ -15,7 +15,7 @@ public class LoggingMiddleware : IMiddleware
     private readonly IConfiguration _configuration;
     private readonly IConfluentKafkaLogging _confluentKafkaLogging;
 
-    public LoggingMiddleware(ILogger<LoggingMiddleware> logger ,
+    public LoggingMiddleware(ILogger<LoggingMiddleware> logger,
         IConfiguration configuration, IConfluentKafkaLogging confluentKafkaLogging)
     {
         _logger = logger;
@@ -140,16 +140,9 @@ public class LoggingMiddleware : IMiddleware
     {
         try
         {
-            // read the response stream from the beginning
             response.Body.Seek(0, SeekOrigin.Begin);
-
-            // and copy it into a string
             var text = await new StreamReader(response.Body).ReadToEndAsync();
-
-            // reset the reader for the response so that the client can read it
             response.Body.Seek(0, SeekOrigin.Begin);
-
-            // return the string for the response, including the status code (e.g. 200, 400, 500)
             return text;
         }
         catch (Exception ex)

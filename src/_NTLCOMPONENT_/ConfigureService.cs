@@ -1,7 +1,6 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.NSwag;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares.Logging;
 using Newtonsoft.Json.Serialization;
 
 

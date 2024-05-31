@@ -4,7 +4,6 @@ using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.HealthChecks;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares.Logging;
 using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -31,9 +30,8 @@ if (app.Environment.IsDevelopment())
 app.UseAllElasticApm(builder.Configuration);
 
 //MiddleWare
-app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<RequestHeaderMiddleware>();
-
+app.UseMiddleware<LoggingMiddleware>();
 
 //health
 app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("startup"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
