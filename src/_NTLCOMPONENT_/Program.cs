@@ -7,12 +7,23 @@ using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 using Elastic.Apm.NetCoreAll;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
+using System.Diagnostics;
+using System.Reflection;
+
+Assembly assembly = Assembly.GetExecutingAssembly();
+FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration,builder.Environment.EnvironmentName);
 builder.Services.AddComponentService(builder.Configuration, builder.Environment.EnvironmentName);
+
+//config HealthCheck
+builder.Services.Configure<HealthCheckResponseOptions>(options =>
+{
+    options.FileVersion = fileVersionInfo.FileVersion;
+});
 
 Log.Logger = ElasticApmLogging.CreateSeriLogger(builder.Configuration);
 
@@ -37,6 +48,7 @@ app.UseMiddleware<LoggingMiddleware>();
 app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("startup"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("ready"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("live"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
+app.MapHealthChecks("/alive", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("alive"), ResponseWriter = HealthCheckResponseWriter.AliveAsync });
 
 app.MapControllers();
 app.Run();

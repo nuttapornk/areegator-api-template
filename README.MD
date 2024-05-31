@@ -23,5 +23,5 @@ dotnet new ins-api-sln -p areegator -d subbroker -o companyapi
 - ✔ WeatherForecast Example Api
 - ✔ Database EF Core with LINQ
 - ✔ Redis
-- ✔ Health
-- ✔ Log ELK with Confluent Kafka
+- ✔ Health,Alive
+- ✔ Logging ELK with Confluent Kafka
