@@ -1,20 +1,25 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Caching;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Databases;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.ExternalApi;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Services;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.models;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Common;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Infrastructure.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Caching;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageBrokers.Kafka;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Logging;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageBrokers;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageBrokers.Kafka;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.MessageHandlers;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Persistence;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Repositories;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure.Logging;
+using Refit;
+using System.Net;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Infrastructure;
 
@@ -33,6 +38,7 @@ public static class ConfigureService
 
         //Services
         services.AddTransient<IDateTime, DateTimeService>();
+        services.AddSingleton<ITraceId, TraceIdService>();
         //services.AddTransient<IConfluentKafkaLogging, ConfluentKafkaLogging>();
 
         //Repository
@@ -40,6 +46,13 @@ public static class ConfigureService
 
         //services.ConfigRedis(configuration);
         services.ConfigLoggingKafka(configuration, envName);
+
+        //Config ExternalApi 
+        services.ConfigSubbrokerApi(configuration);
+
+        //MessageHandlers
+        services.AddTransient<RequestHeaderSetupHandler>();
+        services.AddTransient<ForwardHeaderHandler>();
         return services;
     }
 
@@ -111,5 +124,61 @@ public static class ConfigureService
         services.AddMessageBusSender<MessageLogger>(option);
 
         return services;
+    }
+
+    private static IServiceCollection ConfigSubbrokerApi(this IServiceCollection services, IConfiguration configuration)
+    {
+        var config = configuration.GetSection("ExternalService").GetChildren()
+            .FirstOrDefault(s => s.GetSection("SubbrokerProcessApi") != null)?.GetSection("SubbrokerProcessApi")
+            .Get<ExternalApiConfig>() ?? throw new NotImplementedException("Please imprement ExternalService:SubbrokerProcessApi appsettings.[env].json");
+
+        services.AddRefitClient<ISubbrokerProcessApi>()
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+
+                if (config.ProxyEnable)
+                {
+                    var proxy = new WebProxy
+                    {
+                        Address = new Uri(config.BaseUrl),
+                        BypassProxyOnLocal = false,
+                        UseDefaultCredentials = config.UseDefaultCredentials
+                    };
+
+                    if (!proxy.UseDefaultCredentials)
+                    {
+                        proxy.Credentials = new NetworkCredential(userName: config.ProxyUser, password: config.ProxyPass);
+                    }
+
+                    handler.Proxy = proxy;
+#if DEBUG
+                    handler.Proxy = GetLocalProxy();
+#endif
+                    handler.PreAuthenticate = true;
+                    handler.UseDefaultCredentials = false;
+                }
+                return handler;
+            }).ConfigureHttpClient(cfg =>
+            {
+                cfg.BaseAddress = new Uri(config.BaseUrl);
+                cfg.Timeout = TimeSpan.FromSeconds(config.RequestTimeout);
+            })
+            .AddHttpMessageHandler<RequestHeaderSetupHandler>()
+            .AddHttpMessageHandler<ForwardHeaderHandler>();
+
+        return services;
+    }
+
+    private static IWebProxy GetLocalProxy()
+    {
+        return new WebProxy
+        {
+            Address = new Uri("http://http-proxy03.cfg.co.th:8080"),
+            Credentials = new NetworkCredential("", "")
+        };
     }
 }
