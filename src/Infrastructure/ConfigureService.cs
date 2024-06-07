@@ -132,7 +132,10 @@ public static class ConfigureService
             .FirstOrDefault(s => s.GetSection("SubbrokerProcessApi") != null)?.GetSection("SubbrokerProcessApi")
             .Get<ExternalApiConfig>() ?? throw new NotImplementedException("Please imprement ExternalService:SubbrokerProcessApi appsettings.[env].json");
 
-        services.AddRefitClient<ISubbrokerProcessApi>()
+        services.AddRefitClient<ISubbrokerProcessApi>(new RefitSettings
+        {
+            ContentSerializer = new NewtonsoftJsonContentSerializer()
+        })
             .ConfigurePrimaryHttpMessageHandler(() =>
             {
                 var handler = new HttpClientHandler()

@@ -2,7 +2,6 @@
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Globalization;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Filters;
 
@@ -19,6 +18,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
                 { typeof(Exception), UnHandleException },
+                { typeof(InternalServerErrorException), UnHandleInternalServerErrorException}
             };
     }
     public override void OnException(ExceptionContext context)
@@ -131,6 +131,28 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             StatusCode = StatusCodes.Status200OK
         };
 
+        context.ExceptionHandled = true;
+    }
+
+    private void UnHandleInternalServerErrorException(ExceptionContext context)
+    {
+        var exception = (InternalServerErrorException)context.Exception;
+        var response = new BaseResponse
+        {
+            Code = StatusCodes.Status500InternalServerError.ToString(),
+            DataSource = "N/A",
+            Message = context.Exception.Message,
+            Error = new Error
+            {
+                Code = exception.ErrorCode,
+                Message = exception.ErrorMessage
+            }
+        };
+
+        context.Result = new JsonResult(response)
+        {
+            StatusCode = StatusCodes.Status200OK
+        };
         context.ExceptionHandled = true;
     }
 }

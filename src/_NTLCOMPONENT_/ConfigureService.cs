@@ -3,7 +3,6 @@ using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Helpers.NSwag;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 using Newtonsoft.Json.Serialization;
 
-
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_;
 
 public static class ConfigureService

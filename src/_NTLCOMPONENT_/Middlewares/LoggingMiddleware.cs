@@ -1,13 +1,13 @@
 ﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.Logging;
-using System.Text;
-using Elastic.Apm;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.Infrastructure.Logging;
+using Elastic.Apm;
+using System.Text;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Middlewares;
 
 public class LoggingMiddleware : IMiddleware
 {
-    private readonly string[] excludes = new[] { "alive", "health", "swagger", "favicon" };
+    private readonly string[] excludes = ["/alive", "/health", "/swagger", "/favicon"];
     private const string LogDateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
     private const string KafkaIndexConfigKey = "KafkaOptions:Index";
     private readonly ILogger _logger;
@@ -27,7 +27,7 @@ public class LoggingMiddleware : IMiddleware
     {
         var requestUri = $"{context.Request.Path}{context.Request.QueryString}";
         var requestUrl = $"{context.Request.Scheme}://{context.Request.Host}{requestUri}";
-        var containsAny = ContainsAny(requestUrl, excludes);
+        var containsAny = ContainsAny(requestUri, excludes);
 
         var index = _configuration[KafkaIndexConfigKey] ?? string.Empty;
 
@@ -158,7 +158,7 @@ public class LoggingMiddleware : IMiddleware
         if (string.IsNullOrEmpty(testString) || subStrings == null)
             return false;
 
-        return subStrings.Any(substring => testString.Contains(substring, StringComparison.OrdinalIgnoreCase));
+        return subStrings.Any(substring => testString.StartsWith(substring, StringComparison.OrdinalIgnoreCase));
     }
 
 

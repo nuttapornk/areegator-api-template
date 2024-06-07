@@ -1,6 +1,6 @@
-﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.ExternalApi.SubbrokerProcess.Requests;
-using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Domain.ExternalApi.SubbrokerProcess.Responses;
+﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.models.ExternalApi.SubbrokerProcess.Requests;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.models.ExternalApi.SubbrokerProcess.Responses;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
 using Refit;
 
 namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Interfaces.ExternalApi;
