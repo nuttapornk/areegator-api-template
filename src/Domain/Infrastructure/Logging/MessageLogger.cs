@@ -27,4 +27,7 @@ public class MessageLogger
 
     [JsonProperty("response")]
     public MessageLoggerInfo Response { get; set; }
+
+    [JsonProperty("curl")]
+    public string Curl { get; set; }
 }

@@ -18,7 +18,7 @@ public class InquiryBannerHandler : IRequestHandler<InquiryBannerQuery, IEnumera
         var data = await _subbrokerProcessApi.InquiryBanner(new Common.models.ExternalApi.SubbrokerProcess.Requests.InquiryBannerRequest());
         if (data.Code == StatusCodes.Status200OK.ToString())
         {
-            return data.Data?.Banners?.Select(a=> new InquiryBannerResponse
+            return data.Data?.Banners?.Select(a => new InquiryBannerResponse
             {
                 Item = a.Item,
                 Image = a.Image,
@@ -26,8 +26,9 @@ public class InquiryBannerHandler : IRequestHandler<InquiryBannerQuery, IEnumera
                 Link = a.Link
             }).ToList();
         }
-        else {
-            throw new InternalServerErrorException("this is exception",errorCode: "code1234",errorMessage:"message 1234");        
+        else
+        {
+            throw new InternalServerErrorException("this is exception", errorCode: "code1234", errorMessage: "message 1234");
         }
     }
 }

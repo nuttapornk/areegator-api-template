@@ -38,7 +38,7 @@ public class LoggingMiddleware : IMiddleware
         else
         {
             var traceId = Agent.Tracer.CurrentTransaction.TraceId;
-            context.Request.Headers.Add("trace-id", traceId);
+            context.Request.Headers.Append("trace-id", traceId);
             try
             {
                 var request = await FormatRequest(context.Request);
@@ -49,6 +49,7 @@ public class LoggingMiddleware : IMiddleware
                     RequestUri = requestUri,
                     TraceId = traceId,
                     RequestedDate = DateTime.Now.ToString(LogDateTimeFormat),
+                    Curl = GenerateCurl(requestUrl, context),
                     Request = new MessageLoggerInfo
                     {
                         Body = request,
@@ -159,6 +160,33 @@ public class LoggingMiddleware : IMiddleware
             return false;
 
         return subStrings.Any(substring => testString.StartsWith(substring, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private string GenerateCurl(string requestUrl, HttpContext context)
+    {
+        string[] headersIncludes = ["sender", "forward", "refer", "singnature", "content-type", "referer", "authorization"];
+        var curlCommand = new StringBuilder("curl");
+        
+        // Add the request URL
+        curlCommand.Append($" -X {context.Request.Method} \"{requestUrl}\"");
+
+        // Add headers
+        foreach (var header in context.Request.Headers)
+        {
+            if (headersIncludes.Contains(header.Key.ToLower()))
+            {
+                curlCommand.Append($" -H \"{header.Key}: {header.Value}\"");
+            }
+        }
+
+        // Add request body if it exists
+        var requestBody = FormatRequest(context.Request).Result;
+        if (!string.IsNullOrEmpty(requestBody))
+        {
+            curlCommand.Append($" -d '{requestBody}'");
+        }
+
+        return curlCommand.ToString();
     }
 
 
