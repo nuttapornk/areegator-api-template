@@ -33,4 +33,10 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Process\Weather\Commands\DeleteCountry\" />
+      <Folder Include="Process\Weather\Commands\UpdateCountry\" />
+      <Folder Include="Process\Weather\Commands\CreateCountry\" />
+    </ItemGroup>
+
 </Project>
