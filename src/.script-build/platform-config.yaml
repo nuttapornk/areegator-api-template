@@ -1,0 +1,21 @@
+Platform:
+  Platform: _NTLPLATFORM_
+  Domain: _NTLDOMAIN_
+  Component: _NTLCOMPONENT_
+Inscatalog:
+  Coverage:
+    platform_repo: "tidlor-ins/insplatform-catalog"
+    coverage_branch: "coverage-reports"
+    commit_email: "tidlor-ins@github.com"
+  Apispec:
+    platform_repo: "tidlor-ins/insplatform-catalog"
+    coverage_branch: "api-document"
+    commit_email: "tidlor-ins@github.com"
+  Document: 
+    platform_repo: "tidlor-ins/insplatform-document"
+    coverage_branch: "main"
+    commit_email: "tidlor-ins@github.com"
+Quality:
+  Coverage: 
+    threshold: "3,3,3"
+    thresholdType: "line,branch,method"

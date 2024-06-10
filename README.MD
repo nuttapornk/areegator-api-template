@@ -25,3 +25,5 @@ dotnet new ins-api-sln -p areegator -d subbroker -o companyapi
 - ✔ Redis
 - ✔ Health,Alive
 - ✔ Logging ELK with Confluent Kafka
+- Pagging,Sort,Search
+- 
