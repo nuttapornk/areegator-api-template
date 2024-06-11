@@ -16,7 +16,7 @@ FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Locati
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration,builder.Environment.EnvironmentName);
+builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment.EnvironmentName);
 builder.Services.AddComponentService(builder.Configuration, builder.Environment.EnvironmentName);
 
 //config HealthCheck
@@ -49,6 +49,8 @@ app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck 
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("ready"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("live"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/alive", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("alive"), ResponseWriter = HealthCheckResponseWriter.AliveAsync });
+
+app.UseCors("CORS");
 
 app.MapControllers();
 app.Run();

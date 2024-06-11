@@ -29,6 +29,15 @@ public static class ConfigureService
             options.Filters.Add<ApiExceptionFilterAttribute>();
         });
 
+        //Add Cors
+        services.AddCors(options =>
+        {
+            options.AddPolicy("CORS", corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
+        });
+
         services.AddControllers()
             .AddNewtonsoftJson(options =>
             {
