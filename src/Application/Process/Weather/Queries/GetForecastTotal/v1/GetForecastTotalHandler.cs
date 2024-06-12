@@ -19,6 +19,6 @@ public class GetForecastTotalHandler : IRequestHandler<GetForecastTotalQuery, in
     public async Task<int> Handle(GetForecastTotalQuery request, CancellationToken cancellationToken)
     {
         var req = _mapper.Map<GetWeatherForecastRequest>(request);
-        return await _weatherRepository.GetForecastTotalAsync(cancellationToken,req);
+        return await _weatherRepository.GetForecastTotalAsync(req, cancellationToken);
     }
 }

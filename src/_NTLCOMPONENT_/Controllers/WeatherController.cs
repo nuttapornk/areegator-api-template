@@ -1,4 +1,5 @@
 ﻿using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Common.Models;
+using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Commands.CreateCountry.v1;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetCountries.v1;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetForecast.v1;
 using _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Application.Process.Weather.Queries.GetForecastTotal.v1;
@@ -15,6 +16,14 @@ namespace _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_.Controllers
         {
 
             _logger = logger;
+        }
+
+        [HttpPost]
+        [Route("v1/CreateCountry")]
+        public async Task<IActionResult> CreateCountry(CreateCountryCommand command)
+        {
+            var result = await Mediator.Send(command);
+            return Ok(BaseResponse.Ok(result));
         }
 
         [HttpPost]

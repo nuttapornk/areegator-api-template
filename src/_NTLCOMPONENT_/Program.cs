@@ -45,10 +45,9 @@ app.UseMiddleware<RequestHeaderMiddleware>();
 app.UseMiddleware<LoggingMiddleware>();
 
 //health
-app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("startup"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
+app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("startup"), ResponseWriter = HealthCheckResponseWriter.AliveAsync });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("ready"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("live"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
-app.MapHealthChecks("/alive", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("alive"), ResponseWriter = HealthCheckResponseWriter.AliveAsync });
 
 app.UseCors("CORS");
 

@@ -19,7 +19,7 @@ public class GetForecastHandler : IRequestHandler<GetForecastQuery, IEnumerable<
     public async Task<IEnumerable<GetForecastResponse>> Handle(GetForecastQuery request, CancellationToken cancellationToken)
     {
         var req = _mapper.Map<GetWeatherForecastRequest>(request);
-        var weatherForecasts = await _weatherRepository.GetForecastAsync(cancellationToken,req);
+        var weatherForecasts = await _weatherRepository.GetForecastAsync(req,cancellationToken);
 
         var result = _mapper.Map<IEnumerable<GetForecastResponse>>(weatherForecasts);
         return result;
