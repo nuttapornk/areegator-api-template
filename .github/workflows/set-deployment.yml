@@ -1,0 +1,75 @@
+name: update_manifest
+
+on:
+  workflow_call:
+    inputs:
+      imagename:
+        required: true
+        type: string
+      repository:
+        required: true
+        type: string
+      domain:
+        required: true
+        type: string
+    secrets:
+      my_pat:
+        required: true
+jobs:
+  update_tag:
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          repository: "${{inputs.repository}}"
+          ref: "main"
+          token: ${{ secrets.my_pat }}
+      - name: Set variable
+        run: |-
+          echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+      - name: Is dev?
+        if: env.BRANCH == 'dev'
+        run: echo "DIR=dev" >> $GITHUB_ENV;
+      - name: Is develop?
+        if: env.BRANCH == 'develop'
+        run: echo "DIR=dev" >> $GITHUB_ENV;
+      - name: Is sit?
+        if: env.BRANCH == 'sit'
+        run: echo "DIR=sit" >> $GITHUB_ENV;
+      - name: Is uat?
+        if: env.BRANCH == 'uat'
+        run: echo "DIR=uat" >> $GITHUB_ENV;
+      - name: Is preprod?
+        if: env.BRANCH == 'preprod'
+        run: echo "DIR=pre" >> $GITHUB_ENV;
+      - name: Is main?
+        if: env.BRANCH == 'main'
+        run: echo "DIR=production" >> $GITHUB_ENV;
+      - name: Is master?
+        if: env.BRANCH == 'master'
+        run: echo "DIR=production" >> $GITHUB_ENV;
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v1
+      - name: Set Tag
+        run: |
+          echo "TAG=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV;
+          echo ${{ inputs.imagename }};
+
+      - name: Patch kustomize
+        run: |-
+          ls -la ${{ inputs.domain }}/${{ env.DIR }}
+          cd ${{ inputs.domain }}/${{ env.DIR }}
+          echo "kustomize update ${{ inputs.domain }}/${{ env.DIR }}"
+          kustomize edit set image insuranceitteam/${{ inputs.imagename }}
+          cat kustomization.yml
+          
+      - name: Push update manifest to deployment repo
+        run: |
+          echo "REPO_NAME=${{ inputs.repository }}"
+          ls
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "update manifest"
+          git push

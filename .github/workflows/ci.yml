@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push: 
+    branches: 
+      - dev
+      - uat
+      - preprod
+      - main
+
+jobs:
+
+  # sonarqube-scan:
+  #   if: github.ref == 'refs/heads/dev'
+  #   uses: ./.github/workflows/sonarqube-dotnet.yml
+  #   secrets:
+  #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #     REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+  #     PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+  #   with:
+  #     projectkey: xxxxx
+  #     projectname: xxxxx
+
+  workflow_call_build:
+    uses: tidlor-ins/insplatform-workflow-template/.github/workflows/build-dotnet-7.yml@main
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+    with:
+      imagename: _NTLPLATFORM_._NTLDOMAIN_._NTLCOMPONENT_
+      projectname: _NTLCOMPONENT_
+
+  update_manifest:
+    needs: workflow_call_build
+    uses: ./.github/workflows/set-deployment.yml
+    with:
+      imagename: ${{ needs.workflow_call_build.outputs.imgname }}
+      repository: tidlor-ins/areegator-deployment
+      domain: src/microservices/onprem/_NTLCOMPONENT_
+    secrets:
+      my_pat: ${{ secrets.MY_PAT }}

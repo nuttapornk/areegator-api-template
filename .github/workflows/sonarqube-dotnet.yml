@@ -1,0 +1,46 @@
+name: subbrokerreport-api-scan
+
+on:
+  workflow_call:
+    inputs:
+      projectkey:
+        required: false
+        type: string
+      projectname:
+        required: true
+        type: string
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      SONAR_HOST_URL:
+        required: true
+      REGISTRY_USER:
+        required: true
+      PACKAGE_TOKEN:
+        required: true
+
+jobs:
+  sonarqube:
+    name: sonarqube
+    runs-on: devops-runner
+    container: insuranceitteam/dotnet-sonarqube:latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
+
+      - name: Adjust NuGet Config Credentials
+        run: |
+            rm -f ./nuget.config
+            mv nuget.ci.config nuget.config  
+            echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config 
+            cp nuget.config ${{ inputs.projectname }}/nuget.config
+
+      - name: Run Sonarscanner
+        run: |
+          export DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0   
+          export PATH=$PATH:/root/.dotnet/tools
+          echo $PATH
+          dotnet sonarscanner begin /k:"${{ inputs.projectkey }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.verbose=true 
+          dotnet build 
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
