@@ -37,7 +37,7 @@ public class LoggingMiddleware : IMiddleware
         }
         else
         {
-            var traceId = Agent.Tracer.CurrentTransaction.TraceId;
+            var traceId = Agent.Tracer?.CurrentTransaction?.TraceId ?? Guid.NewGuid().ToString();
             context.Request.Headers.Append("trace-id", traceId);
             try
             {

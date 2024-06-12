@@ -38,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseReDoc();
 }
 
-app.UseAllElasticApm(builder.Configuration);
+
 
 //MiddleWare
 app.UseMiddleware<RequestHeaderMiddleware>();
@@ -49,7 +49,11 @@ app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = healthCheck 
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("ready"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = healthCheck => healthCheck.Tags.Contains("live"), ResponseWriter = HealthCheckResponseWriter.WriteAsync });
 
+//Enable Cors
 app.UseCors("CORS");
+
+//Apm
+app.UseAllElasticApm(builder.Configuration);
 
 app.MapControllers();
 app.Run();
