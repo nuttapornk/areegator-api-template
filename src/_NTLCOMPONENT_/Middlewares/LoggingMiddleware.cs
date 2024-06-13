@@ -179,12 +179,12 @@ public class LoggingMiddleware : IMiddleware
             }
         }
 
-        // Add request body if it exists
-        var requestBody = FormatRequest(context.Request).Result;
-        if (!string.IsNullOrEmpty(requestBody))
-        {
-            curlCommand.Append($" -d '{requestBody}'");
-        }
+        //// Add request body if it exists
+        //var requestBody = FormatRequest(context.Request).Result;
+        //if (!string.IsNullOrEmpty(requestBody))
+        //{
+        //    curlCommand.Append($" -d '{requestBody}'");
+        //}
 
         return curlCommand.ToString();
     }

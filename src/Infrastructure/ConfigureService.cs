@@ -72,9 +72,10 @@ public static class ConfigureService
             Ssl = bool.Parse(Environment.GetEnvironmentVariable("REDIS_SSL") ?? "false")
         };
 
-#if DEBUG
-        configuration.GetSection("Redis").Bind(config);
-#endif
+        if (IsDebug())
+        {
+            configuration.GetSection("Redis").Bind(config);
+        }
 
         string endpoint = config.EndPoint.Contains(':') ? config.EndPoint.Split(':')[0] : config.EndPoint;
         int port = int.Parse(config.EndPoint.Contains(':') ? config.EndPoint.Split(':')[1] : "6379");
@@ -103,22 +104,14 @@ public static class ConfigureService
         services.AddTransient<IConfluentKafkaLogging, ConfluentKafkaLogging>();
 
         KafkaOptions option = new();
+
         configuration.GetSection("KafkaOptions").Bind(option);
 
-#if DEBUG
-        switch (environmentName.ToLower())
+        if (!IsDebug())
         {
-            case "development":
-                option.BootstrapServers = "mandalorian-dev.ntl.co.th:9092";
-                break;
-            case "uat":
-                option.BootstrapServers = "mandalorian-uat.ntl.co.th:9092";
-                break;
-            case "preproduction":
-                option.BootstrapServers = "mandalorian-pre.ntl.co.th:9092";
-                break;
+            //kube create environment variable
+            option.BootstrapServers = Environment.GetEnvironmentVariable("KafkaOptions_BootstrapServers") ?? string.Empty;  
         }
-#endif
 
         services.AddMessageBusSender<ApplicationLog>(option);
         services.AddMessageBusSender<MessageLogger>(option);
@@ -158,9 +151,10 @@ public static class ConfigureService
                     }
 
                     handler.Proxy = proxy;
-#if DEBUG
-                    handler.Proxy = GetLocalProxy();
-#endif
+                    if (IsDebug())
+                    {
+                        handler.Proxy = GetLocalProxy();
+                    }
                     handler.PreAuthenticate = true;
                     handler.UseDefaultCredentials = false;
                 }
@@ -180,8 +174,16 @@ public static class ConfigureService
     {
         return new WebProxy
         {
-            Address = new Uri("http://http-proxy03.cfg.co.th:8080"),
-            Credentials = new NetworkCredential("", "")
+            Address = new Uri("http://HTTP-Proxy03.cfg.co.th:8080"),
+            Credentials = new NetworkCredential("NTL-SVA-API-INTERNET", "Nas3jk!AtqzxEUy7")
         };
+    }
+
+    private static bool IsDebug()
+    {
+#if DEBUG
+        return true;
+#endif
+        return false;
     }
 }

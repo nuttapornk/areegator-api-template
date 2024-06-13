@@ -25,6 +25,9 @@ public static class MessageBrokersCollectionExtensions
     {
         var kafkaOption = new KafkaOptions();
         configuration.GetSection("KafkaOptions").Bind(kafkaOption);
+#if DEBUG
+        kafkaOption.BootstrapServers = "mandalorian-dev.ntl.co.th:9092";
+#endif
         return kafkaOption;
     }
 }
